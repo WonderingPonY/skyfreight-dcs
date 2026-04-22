@@ -73,8 +73,9 @@ local M = {
     tickets_per_credits = 1000,
   },
   debug = {
-    enabled = false,
+    enabled = true,
     log_level = "info",
+    single_player_ucid = "sp_test_pilot",
   },
 }
 

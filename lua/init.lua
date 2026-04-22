@@ -1,5 +1,18 @@
 skyfreight = skyfreight or {}
 
+local function isDebugEnabled()
+  return skyfreight
+    and skyfreight.config
+    and skyfreight.config.debug
+    and skyfreight.config.debug.enabled == true
+end
+
+local function logDebug(message)
+  if isDebugEnabled() and env and env.info then
+    env.info("[skyfreight][debug] " .. tostring(message))
+  end
+end
+
 local function logError(message)
   if env and env.error then
     env.error("[skyfreight] " .. tostring(message))
@@ -7,6 +20,8 @@ local function logError(message)
 end
 
 local function loadFile(path, label)
+  logDebug("loading " .. label .. " from " .. path)
+
   local ok, result = pcall(dofile, path)
 
   if not ok then
@@ -26,6 +41,14 @@ local function resolveLuaPath()
   local info = nil
   local source = ""
   local path = "."
+
+  if skyfreight
+    and skyfreight.paths
+    and type(skyfreight.paths.lua) == "string"
+    and skyfreight.paths.lua ~= ""
+  then
+    return skyfreight.paths.lua
+  end
 
   if debug and debug.getinfo then
     info = debug.getinfo(1, "S")
@@ -47,6 +70,7 @@ local function loadModule(name, path)
 
   skyfreight[name] = module
   skyfreight.modules[name] = module
+  logDebug("loaded " .. name .. " from " .. path)
 
   return module
 end
@@ -58,6 +82,7 @@ skyfreight.core.bootstrap(skyfreight, luaPath)
 skyfreight.modules.core = skyfreight.core
 
 loadModule("config", luaPath .. "/config.lua")
+logDebug("loaded core from " .. luaPath .. "/core.lua")
 loadModule("util", luaPath .. "/util.lua")
 loadModule("events", luaPath .. "/events.lua")
 loadModule("timers", luaPath .. "/timers.lua")
@@ -80,6 +105,7 @@ skyfreight.templates.narratives = loadFile(
   luaPath .. "/templates/narratives.lua",
   "templates.narratives"
 )
+logDebug("loaded templates.narratives from " .. luaPath .. "/templates/narratives.lua")
 
 if env and env.info then
   env.info("[skyfreight] loaded Phase 0 module skeleton")
