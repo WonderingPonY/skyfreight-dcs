@@ -1,0 +1,19 @@
+# DCS local test artifacts
+*.miz.bak
+dcs.log
+dcs.log.old
+logs/
+
+# Local dev
+.env
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# State files (if you ever run Skyfreight from the repo directly)
+Saves/
+*.json.tmp
+*.json.bak
